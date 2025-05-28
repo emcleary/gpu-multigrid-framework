@@ -42,8 +42,8 @@ int main(int argc, char* argv[]) {
     // auto lhs = std::make_shared<LHSSMEM>(max_threads_per_block);
     
     // auto iterator = std::make_shared<IteratorNaive>(max_threads_per_block);
-    // auto iterator = std::make_shared<IteratorAsync>(max_threads_per_block);
-    auto iterator = std::make_shared<IteratorAsyncSMEM>(max_threads_per_block);
+    auto iterator = std::make_shared<IteratorAsync>(max_threads_per_block);
+    // auto iterator = std::make_shared<IteratorAsyncSMEM>(max_threads_per_block);
 
     auto restrictor = std::make_shared<gmf::modules::RestrictorFullWeighting>(max_threads_per_block);
 
@@ -72,7 +72,8 @@ int main(int argc, char* argv[]) {
 
     double duration = 0;
     dump_results(soln, *eqn, grid.get_x(), "results_vcycle_" + std::to_string(0) + ".csv");
-    for (int i = 1; i <= 20; ++i) {
+    const int n_iter = 20;
+    for (int i = 1; i <= n_iter; ++i) {
         timer.start();
         double resid_norm = vcycle.run();
         timer.stop();
@@ -81,6 +82,7 @@ int main(int argc, char* argv[]) {
         dump_results(soln, *eqn, grid.get_x(), "results_vcycle_" + std::to_string(i) + ".csv");
     }
     std::cout << "Total time: " << duration << " ms\n";
+    std::cout << "Average time: " << duration / n_iter << " ms\n";
 
     const gmf::Array& x = grid.get_x();
     gmf::Array solution_error(N);
