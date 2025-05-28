@@ -1,0 +1,6 @@
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/performance)
+set(TARGET_NAME cpu_gpu_ratio)
+add_executable(${TARGET_NAME} main.cpp iterator_cpu.cu iterator_naive.cu lhs_cpu.cu lhs_naive.cu equation.cpp)
+set_target_properties(${TARGET_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+target_include_directories(${TARGET_NAME} PUBLIC ../..)
+target_link_libraries(${TARGET_NAME} PUBLIC Src ExUtil CUDA::cudart CUDA::cublas)

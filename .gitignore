@@ -1,0 +1,7 @@
+build
+cmake
+main
+*~
+.gdb_history
+.vscode
+*.csv

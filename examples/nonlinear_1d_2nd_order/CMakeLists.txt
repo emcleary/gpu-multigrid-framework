@@ -1,0 +1,6 @@
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples)
+set(TARGET_NAME nonlinear_1d_2nd_order)
+add_executable(${TARGET_NAME} main.cpp iterator.cu lhs.cu equation.cpp)
+set_target_properties(${TARGET_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+target_include_directories(${TARGET_NAME} PUBLIC ../..)
+target_link_libraries(${TARGET_NAME} PUBLIC Src ExUtil CUDA::cudart CUDA::cublas)
