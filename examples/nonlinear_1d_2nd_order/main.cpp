@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
     const size_t N = args.n_points;
     std::shared_ptr<gmf::Solver> solver = args.solver;
     
-    const double gamma = 5.0;
+    const double gamma = 10.0;
 
     const int nu0 = 2, nu1 = 1;
     const size_t max_threads_per_block = 512;
