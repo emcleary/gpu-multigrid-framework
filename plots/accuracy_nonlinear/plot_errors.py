@@ -6,14 +6,13 @@ from accuracy import AccuracyPlot
 
 
 def load_data(filename):
-    assert(f.startswith('results_'))
-    k = ' '.join(f.split('.')[0].split('_')[1:])
+    assert(filename.startswith('results_'))
     v = []
-    with open(f, 'r') as file:
+    with open(filename, 'r') as file:
         while line := file.readline():
             e = float(line.rstrip('\n').split(' ')[-1])
             v.append(e)
-    return k, tuple(v)
+    return tuple(v)
 
 def load_levels():
     levels = []
@@ -24,15 +23,9 @@ def load_levels():
 
 if __name__ == '__main__':
     levels = load_levels()
+    data2 = load_data('results_nonlinear_full_gpu.txt')
     
-    filenames = sys.argv[1:]
-    data = list()
-    for f in filenames:
-        k, v = load_data(f)
-        data.append((k, v))
-
-    ap = AccuracyPlot(levels, data)
-    ap.add_reference(2, 1)
-    ap.add_reference(4, 0.001)
-    ap.title = 'Linear Example'
-    ap.plot('results.pdf')
+    ap2 = AccuracyPlot(levels, data2)
+    ap2.add_reference(2, 1)
+    # ap2.title = 'Nonlinear Example'
+    ap2.plot('results.png')

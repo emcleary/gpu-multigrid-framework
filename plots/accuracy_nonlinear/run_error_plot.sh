@@ -1,0 +1,26 @@
+#!/bin/env bash
+elf=../../build/bin/examples/nonlinear_1d_2nd_order
+
+n_levels_min=2
+n_levels_max=15
+
+linear=1
+nonlinear_full=2
+nonlinear_error=3
+
+on_cpu=0
+on_gpu=1
+
+rm -vf results* levels.txt
+
+
+for i in `seq $n_levels_min $n_levels_max`; do
+    echo $i
+    echo $i >> levels.txt
+    $elf $i $linear $on_cpu | grep "|e|" >> results_linear_cpu.txt
+    $elf $i $linear $on_gpu | grep "|e|" >> results_linear_gpu.txt
+    $elf $i $nonlinear_full $on_cpu | grep "|e|" >> results_nonlinear_full_cpu.txt
+    $elf $i $nonlinear_full $on_gpu | grep "|e|" >> results_nonlinear_full_gpu.txt
+    $elf $i $nonlinear_error $on_cpu | grep "|e|" >> results_nonlinear_error_cpu.txt
+    $elf $i $nonlinear_error $on_gpu | grep "|e|" >> results_nonlinear_error_gpu.txt
+done

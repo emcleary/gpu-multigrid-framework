@@ -1,6 +1,6 @@
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/examples)
 set(TARGET_NAME heat_equation_1d_4th_order)
-add_executable(${TARGET_NAME} main.cpp iterator_cpu.cu iterator_naive.cu iterator_async.cu iterator_async_smem.cu lhs_cpu.cu lhs_naive.cu lhs_smem.cu equation.cpp)
+add_executable(${TARGET_NAME} main.cpp iterator_cpu.cu iterator_naive.cu iterator_async.cu lhs_cpu.cu lhs_naive.cu equation.cpp)
 set_target_properties(${TARGET_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 target_include_directories(${TARGET_NAME} PUBLIC ../..)
 target_link_libraries(${TARGET_NAME} PUBLIC Src ExUtil CUDA::cudart CUDA::cublas)

@@ -6,9 +6,7 @@
 #include "equation.hpp"
 #include "iterator_naive.cuh"
 #include "iterator_async.cuh"
-#include "iterator_async_smem.cuh"
 #include "lhs_naive.cuh"
-#include "lhs_smem.cuh"
 
 #include "src/array.hpp"
 #include "src/cycles.hpp"
@@ -39,11 +37,9 @@ int main(int argc, char* argv[]) {
     auto eqn = std::make_shared<HeatEquation>();
 
     auto lhs = std::make_shared<LHSNaive>(max_threads_per_block);
-    // auto lhs = std::make_shared<LHSSMEM>(max_threads_per_block);
     
     // auto iterator = std::make_shared<IteratorNaive>(max_threads_per_block);
     auto iterator = std::make_shared<IteratorAsync>(max_threads_per_block);
-    // auto iterator = std::make_shared<IteratorAsyncSMEM>(max_threads_per_block);
 
     auto restrictor = std::make_shared<gmf::modules::RestrictorFullWeighting>(max_threads_per_block);
 

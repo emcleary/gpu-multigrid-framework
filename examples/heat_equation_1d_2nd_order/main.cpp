@@ -3,7 +3,6 @@
 
 #include "equation.hpp"
 #include "iterator_async.cuh"
-#include "iterator_async_smem.cuh"
 #include "iterator_naive.cuh"
 #include "lhs_naive.cuh"
 
@@ -39,7 +38,6 @@ int main(int argc, char* argv[]) {
 
     // auto iterator = std::make_shared<IteratorNaive>(max_threads_per_block);
     auto iterator = std::make_shared<IteratorAsync>(max_threads_per_block);
-    // auto iterator = std::make_shared<IteratorAsyncSMEM>(max_threads_per_block);
 
     auto restrictor = std::make_shared<gmf::modules::RestrictorFullWeighting>(max_threads_per_block);
     // auto restrictor = std::make_shared<gmf::modules::RestrictorInjection>();
