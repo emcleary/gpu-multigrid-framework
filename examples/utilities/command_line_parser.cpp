@@ -2,7 +2,6 @@
 
 #include "src/solver.cuh"
 #include "src/solver_linear.cuh"
-#include "src/solver_nonlinear_error.cuh"
 #include "src/solver_nonlinear_full.cuh"
 
 
@@ -12,7 +11,6 @@ void usage_error() {
     std::cerr << "   S: solver ID\n";
     std::cerr << "      1: linear\n";
     std::cerr << "      2: nonlinear full\n";
-    std::cerr << "      3: nonlinear error\n";
     std::cerr << "   G: 0 for cpu only, otherwise gpu\n";
     exit(EXIT_FAILURE);
 }
@@ -30,10 +28,6 @@ CMD command_line_parser(int argc, char* argv[]) {
     case 2:
         std::cout << "Nonlinear full solver\n";
         solver = std::make_shared<gmf::SolverNonlinearFull>();
-        break;
-    case 3:
-        std::cout << "Nonlinear error solver\n";
-        solver = std::make_shared<gmf::SolverNonlinearError>();
         break;
     default:
         std::cerr << "Solver ID " << argv[2] << " not allowed.\n\n";

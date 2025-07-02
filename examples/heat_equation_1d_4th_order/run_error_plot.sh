@@ -21,6 +21,4 @@ for i in `seq $n_levels_min $n_levels_max`; do
     $executable $i $linear $on_gpu | grep "|e|" >> results_linear_gpu.txt
     $executable $i $nonlinear_full $on_cpu | grep "|e|" >> results_nonlinear_full_cpu.txt
     $executable $i $nonlinear_full $on_gpu | grep "|e|" >> results_nonlinear_full_gpu.txt
-    $executable $i $nonlinear_error $on_cpu | grep "|e|" >> results_nonlinear_error_cpu.txt
-    $executable $i $nonlinear_error $on_gpu | grep "|e|" >> results_nonlinear_error_gpu.txt
 done

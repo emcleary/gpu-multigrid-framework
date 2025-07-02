@@ -26,16 +26,13 @@ if __name__ == '__main__':
 
     data2 = load_data('results_linear_2nd_order.txt')
     
-    data4 = load_data('results_linear_4th_order.txt')
-    data4 = data4[:-2]
-    levels4 = levels[:-2]
-    
     ap2 = AccuracyPlot(levels, data2)
     ap2.add_reference(2, 1)
     # ap2.title = 'Linear Example'
-    ap2.plot('results_2nd_order.png')
-    
-    ap4 = AccuracyPlot(levels4, data4)
-    ap4.add_reference(4, 0.001)
-    # ap4.title = 'Linear Example'
-    ap4.plot('results_4th_order.png')
+    ap2.plot('results_2nd_order_linear.png')
+
+
+    data2 = load_data('results_linear_2nd_order.txt')
+    ap2.add_reference(2, 1)
+    # ap2.title = 'Nonlinear Solver'
+    ap2.plot('results_2nd_order_nonlinear.png')

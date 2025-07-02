@@ -22,20 +22,9 @@ namespace gmf {
 class SolverNonlinearFull : public Solver {
 public:
     SolverNonlinearFull() {}
-    virtual const Array& get_solution() { return m_levels.back().solution; }
-    virtual int get_num_levels() override { return m_levels.size(); };
 
-    virtual void initialize(Grid& grid, const int n_gpu) override;
-    virtual void initialize_cycle() override {}
-    virtual void finalize_cycle() override {}
-    virtual double calculate_residual_norm() override;
-
-    virtual void relax(const int n_iter, const int lvl) override;
     virtual void restrict(const int lvl) override;
-    virtual void interpolate(const int lvl) override;
-
-private:
-    std::vector<LevelNonlinearFull> m_levels;
+    virtual void correct(const int lvl) override;
 };
 
 } // namespace gmf

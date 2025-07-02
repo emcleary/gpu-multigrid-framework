@@ -7,9 +7,10 @@
 
 using gmf::Array;
 using gmf::Grid;
+using gmf::modules::BoundaryConditions;
 
 
-void IteratorCPU::run_host(Array& v, const Array& f, const Grid& grid) {
+void IteratorCPU::run_host(Array& v, const BoundaryConditions& bcs, const Grid& grid) {
     const int n_pts = v.size();
     const double h2 = grid.get_cell_width() * grid.get_cell_width();
 

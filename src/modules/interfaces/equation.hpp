@@ -12,7 +12,7 @@ class Equation {
 public:
     Equation() {}
 
-    virtual double rhs(const double x, const double v) const = 0;
+    virtual double rhs(const double x) const = 0;
 
     virtual  double analytical_solution(const double x) const { return std::nan(""); };
 

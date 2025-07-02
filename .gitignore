@@ -5,3 +5,4 @@ main
 .gdb_history
 .vscode
 *.csv
+*.ncu-rep

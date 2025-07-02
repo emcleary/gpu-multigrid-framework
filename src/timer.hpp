@@ -1,8 +1,7 @@
+#pragma once
+
 #include <chrono>
 #include <cuda_runtime.h>
-
-#include "utilities.hpp"
-
 
 namespace gmf {
 

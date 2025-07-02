@@ -5,7 +5,7 @@
 
 static const double PI = std::numbers::pi;
 
-double HeatEquation::rhs(const double x, const double v) const {
+double HeatEquation::rhs(const double x) const {
     return 4 * PI * PI * std::sin(2 * PI * x);
 }
 

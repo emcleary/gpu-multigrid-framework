@@ -6,3 +6,4 @@
 #include "src/modules/interfaces/lhs.cuh"
 #include "src/modules/interfaces/norm.cuh"
 #include "src/modules/interfaces/restrictor.cuh"
+#include "src/modules/interfaces/rhs.hpp"

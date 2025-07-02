@@ -32,14 +32,19 @@ def plot(x, u, v):
 
     ax[1].plot(x, u - v, label='analytical solution')
 
+    ax[0].set_ylabel('v(x)')
+    ax[1].set_ylabel('e(x)')
+    ax[1].set_xlabel('x')
+
     plt.show()
-        
+    # plt.savefig('plot.png', bbox_inches='tight')
 
 if __name__ == '__main__':
     if len(sys.argv) >= 1:
-        infile = sys.argv[1]
+        infiles = sys.argv[1:]
     else:
-        infile = 'results.csv'
+        infiles = ['results.csv']
 
-    x, u, v = load_data(infile)
-    plot(x, u, v)
+    for infile in infiles:
+        x, u, v = load_data(infile)
+        plot(x, u, v)

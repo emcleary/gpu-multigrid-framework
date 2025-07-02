@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
     const gmf::Array& x = grid.get_x();
     for (int i = 0; i < grid.size(); ++i) {
         v[i] = eqn.initial_condition(x[i]);
-        f[i] = eqn.rhs(x[i], v[i]);
+        f[i] = eqn.rhs(x[i]);
     }
 
     float duration = 1e10;

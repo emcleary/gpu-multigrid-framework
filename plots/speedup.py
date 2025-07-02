@@ -58,6 +58,7 @@ class Plot:
 
 class SpeedupPlot(Plot):
     def __init__(self, levels, cpu, gpu):
+        super().__init__()
         self._levels = levels
         self._grid = [1<<lvl for lvl in levels]
         self._data = [c / g for c, g in zip(cpu, gpu)]

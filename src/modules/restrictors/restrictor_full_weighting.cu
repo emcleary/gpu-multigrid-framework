@@ -17,35 +17,65 @@ double eval(const ArrayRaw& fine, const int i) {
 }
 
 __global__
-void kernel(ArrayRaw fine, ArrayRaw coarse) {
+void kernel(ArrayRaw fine, ArrayRaw coarse, BoundaryConditions bcs) {
     int idx = threadIdx.x + blockDim.x * blockIdx.x;
-    const int n_pts = coarse.size();
 
-    // must skip boundaries for Dirichlet BCs
-    if (0 < idx && idx < n_pts - 1)
+    if (0 < idx && idx < coarse.size() - 1)
         coarse[idx] = eval(fine, idx);
 
-    // boundary conditions
     if (threadIdx.x == 0 && blockIdx.x == 0) {
-        coarse.front() = fine.front();
-        coarse.back() = fine.back();
+        if (bcs.is_periodic()) {
+            const int n = fine.size() - 1;
+            coarse.front() = (fine[n-1] + 2 * fine[0] + fine[1]) / 4;
+            coarse.back() = coarse.front();
+        } else {
+            if (bcs.is_left_dirichlet()) {
+                coarse.front() = fine[0];
+            } else { // neumann
+                coarse.front() = (2 * fine[0] + fine[1]) / 4;
+            }
+
+            if (bcs.is_right_dirichlet()) {
+                coarse.back() = fine.back();
+            } else { // neumann
+                const int n = fine.size() - 1;
+                coarse.back() = (2 * fine[n] + fine[n-1]) / 4;
+            }
+        }
     }
 }
 
 } // namespace restrictor_full_weighting
 
 
-void RestrictorFullWeighting::run_host(Array& fine, Array& coarse) {
+void RestrictorFullWeighting::run_host(Array& fine, Array& coarse, BoundaryConditions& bcs) {
     for (int i = 1; i < coarse.size() - 1; ++i)
         coarse[i] = restrictor_full_weighting::eval(fine, i);
-    coarse.front() = fine.front();
-    coarse.back() = fine.back();
+
+    if (bcs.is_periodic()) {
+        const int n = fine.size() - 1;
+        coarse.front() = (fine[n-1] + 2 * fine[0] + fine[1]) / 4;
+        coarse.back() = coarse.front();
+    } else {
+        if (bcs.is_left_dirichlet()) {
+            coarse.front() = fine[0];
+        } else { // neumann
+            coarse.front() = (2 * fine[0] + fine[1]) / 4;
+        }
+
+        if (bcs.is_right_dirichlet()) {
+            coarse.back() = fine.back();
+        } else { // neumann
+            const int n = fine.size() - 1;
+            coarse.back() = (2 * fine[n] + fine[n-1]) / 4;
+        }
+    }
 }
 
-void RestrictorFullWeighting::run_device(Array& fine, Array& coarse) {
+void RestrictorFullWeighting::run_device(Array& fine, Array& coarse, BoundaryConditions& bcs) {
     const int threadsPerBlock = std::min(m_max_threads_per_block, coarse.size() - 1);
     const int blocksPerGrid = (coarse.size() + threadsPerBlock - 1) / threadsPerBlock;
-    restrictor_full_weighting::kernel<<<blocksPerGrid, threadsPerBlock>>>(fine, coarse);
+    restrictor_full_weighting::kernel<<<blocksPerGrid, threadsPerBlock>>>(fine, coarse, bcs);
 }
 
 } // namespace modules

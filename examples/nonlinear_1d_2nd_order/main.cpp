@@ -5,7 +5,9 @@
 
 #include "equation.hpp"
 #include "iterator.cuh"
+#include "iterator_async.cuh"
 #include "lhs.cuh"
+#include "rhs.hpp"
 
 #include "src/array.hpp"
 #include "src/cycles.hpp"
@@ -26,7 +28,7 @@ int main(int argc, char* argv[]) {
     const size_t N = args.n_points;
     std::shared_ptr<gmf::Solver> solver = args.solver;
     
-    const double gamma = 10.0;
+    const double gamma = 0.0;
 
     const int nu0 = 2, nu1 = 1;
     const size_t max_threads_per_block = 512;
@@ -37,9 +39,11 @@ int main(int argc, char* argv[]) {
 
     auto eqn = std::make_shared<NonlinearEquation>(gamma);
 
-    auto lhs = std::make_shared<LHSNonlinear>(max_threads_per_block, eqn);
+    auto lhs = std::make_shared<NonlinearLHS>(max_threads_per_block, eqn);
+    auto rhs = std::make_shared<NonlinearRHS>(eqn);
 
-    auto iterator = std::make_shared<IteratorNonlinear>(max_threads_per_block, eqn);
+    // auto iterator = std::make_shared<IteratorNonlinear>(max_threads_per_block, eqn);
+    auto iterator = std::make_shared<IteratorAsync>(max_threads_per_block, eqn);
     
     auto restrictor = std::make_shared<gmf::modules::RestrictorFullWeighting>(max_threads_per_block);
     // auto restrictor = std::make_shared<gmf::modules::RestrictorInjection>();
@@ -49,6 +53,14 @@ int main(int argc, char* argv[]) {
     auto norm = std::make_shared<gmf::modules::NormL2>();
     // auto norm = std::make_shared<gmf::modules::NormAmax>();
 
+    auto boundary_conditions = std::make_shared<gmf::modules::BoundaryConditions>();
+
+    boundary_conditions->set_left_dirichlet(eqn->analytical_solution(xmin));
+    // boundary_conditions->set_left_neumann(eqn->analytical_derivative(xmin));
+
+    // boundary_conditions->set_right_dirichlet(eqn->analytical_solution(xmax));
+    boundary_conditions->set_right_neumann(eqn->analytical_derivative(xmax));
+
     solver->set_max_threads_per_block(max_threads_per_block);
     solver->set_equation(eqn);
     solver->set_iterator(iterator);
@@ -56,6 +68,8 @@ int main(int argc, char* argv[]) {
     solver->set_residual_norm(norm);
     solver->set_interpolator(interpolator);
     solver->set_lhs(lhs);
+    solver->set_rhs(rhs);
+    solver->set_boundary_conditions(boundary_conditions);
 
     const int n_gpu = args.on_gpu ? args.n_levels : 0;
     gmf::VCycle vcycle;
@@ -69,14 +83,14 @@ int main(int argc, char* argv[]) {
 
     double duration = 0;
     dump_results(soln, *eqn, grid.get_x(), "results_vcycle_" + std::to_string(0) + ".csv");
-    const int n_iter = 20;
+    const int n_iter = 80;
     for (int i = 1; i <= n_iter; ++i) {
         timer.start();
         double resid_norm = vcycle.run();
         timer.stop();
         duration += timer.duration();
         std::cout << "Iteration " << i << " |r| = " << resid_norm << ", time = " << timer.duration() << " ms\n";
-        dump_results(soln, *eqn, grid.get_x(), "results_vcycle_" + std::to_string(i) + ".csv");
+        // dump_results(soln, *eqn, grid.get_x(), "results_vcycle_" + std::to_string(i) + ".csv");
     }
     std::cout << "Total time: " << duration << " ms\n";
     std::cout << "Average time: " << duration / n_iter << " ms\n";

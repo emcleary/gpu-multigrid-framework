@@ -57,7 +57,7 @@ class AccuracyPlot:
         ax.set_xlabel(self._xlabel)
         ax.set_ylabel(self._ylabel)
 
-        ax.xaxis.set_ticklabels([f'$2^{i}$' for i in self._levels])
+        ax.xaxis.set_ticklabels([f"$2^{{{i}}}$" for i in self._levels][::2])
         ax.set_title(self._title)
         
         if outfile:

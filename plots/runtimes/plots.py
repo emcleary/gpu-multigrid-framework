@@ -26,11 +26,11 @@ def make_plots(levels, file_cpu, file_gpu, title, name_runtime, name_speedup):
     ]
 
     rt = RuntimesPlot(levels, data)
-    rt.title = title
+    # rt.title = title
     rt.plot(name_runtime)
 
     sp = SpeedupPlot(levels, data[0][1], data[1][1])
-    sp.title = title
+    # sp.title = title
     sp.plot(name_speedup)
 
 
@@ -44,24 +44,9 @@ if __name__ == '__main__':
                'results_runtimes_linear_2nd_order.png',
                'results_speedup_linear_2nd_order.png')
 
-    make_plots(levels,
-               'results_linear_4th_order_cpu.txt',
-               'results_linear_4th_order_gpu.txt',
-               'Linear 4th Order Example',
-               'results_runtimes_linear_4th_order.png',
-               'results_speedup_linear_4th_order.png')
-
-    make_plots(levels,
-               'results_nonlinear_full_cpu.txt',
-               'results_nonlinear_full_gpu.txt',
-               'Nonlinear Full Example',
-               'results_runtimes_nonlinear_full.png',
-               'results_speedup_nonlinear_full.png')
-
-    make_plots(levels,
-               'results_nonlinear_error_cpu.txt',
-               'results_nonlinear_error_gpu.txt',
-               'Nonlinear Error Example',
-               'results_runtimes_nonlinear_error.png',
-               'results_speedup_nonlinear_error.png')
-    
+    # make_plots(levels,
+    #            'results_nonlinear_full_cpu.txt',
+    #            'results_nonlinear_full_gpu.txt',
+    #            'Nonlinear Full Example',
+    #            'results_runtimes_nonlinear_full.png',
+    #            'results_speedup_nonlinear_full.png')

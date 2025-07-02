@@ -58,6 +58,7 @@ class Plot:
 
 class RuntimesPlot(Plot):
     def __init__(self, levels, data):
+        super().__init__()
         self._levels = levels
         self._grid = [1<<lvl for lvl in levels]
         self._data = data

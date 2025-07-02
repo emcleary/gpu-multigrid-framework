@@ -2,36 +2,38 @@
 
 #include <cuda_runtime.h>
 
-#include "iterator_schemes.cuh"
+#include "schemes.cuh"
 #include "src/array.hpp"
 
 using gmf::Array;
 using gmf::Grid;
+using gmf::modules::BoundaryConditions;
 
 
-void IteratorCPU::run_host(Array& v, const Array& f, const Grid& grid) {
-    const int n_pts = v.size();
+void IteratorCPU::run_host(Array& v, const Array& f, const BoundaryConditions& bcs, const Grid& grid) {
+    const int n = v.size() - 1;
     const double h2 = grid.get_cell_width() * grid.get_cell_width();
 
-    if (v.size() > 5) {
-        v[1] = eval4left(v, f, h2, 1);
-        for (int i = 4; i < n_pts - 2; i += 3)
-            v[i] = eval4(v, f, h2, i);
-        for (int i = 2; i < n_pts - 2; i += 3)
-            v[i] = eval4(v, f, h2, i);
-        for (int i = 3; i < n_pts - 2; i += 3)
-            v[i] = eval4(v, f, h2, i);
-        v[n_pts-2] = eval4right(v, f, h2, n_pts-2);
-    } else if (v.size() == 5) {
-        v[1] = eval2(v, f, h2, 1);
-        v[2] = eval4(v, f, h2, 2);
-        v[3] = eval2(v, f, h2, 3);
-    } else {
-        assert(v.size() == 3);
-        v[1] = eval2(v, f, h2, 1);
-    }
-}
+    // Red-Black Gauss Seidel -- parallel and converges faster
+    for (int i = 1; i < n; i += 2)
+        v[i] = eval_gs(v, f, h2, i);
+    for (int i = 2; i < n; i += 2)
+        v[i] = eval_gs(v, f, h2, i);
 
-void IteratorCPU::run_error_host(Array& e, const Array& v, const Array& r, const Grid& grid) {
-    run_host(e, r, grid);
+    if (bcs.is_periodic()) {
+        v[0] = (v[n-1] + v[1] + f[0] * h2) / 2;
+        v[n] = v[0];
+    } else {
+        if (bcs.is_left_dirichlet()) {
+            v.front() = f.front();
+        } else { // neumann
+            v[0] = v[1] + f[0] * h2 / 2;
+        }
+
+        if (bcs.is_right_dirichlet()) {
+            v.back() = f.back();
+        } else { // neumann
+            v[n] = v[n-1] + f[n] * h2 / 2;
+        }
+    }
 }
