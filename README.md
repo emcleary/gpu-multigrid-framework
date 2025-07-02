@@ -12,7 +12,6 @@ Multigrid Tutorial` by William, Henson, and McCormick. These are:
 
 * Linear solver
 * Nonlinear full solver
-* Nonlinear error solver
 
 Iterative solvers are to be implemented by the user, as they depend on
 the differential equations to be solved. The algorithm implemented in
@@ -30,12 +29,11 @@ threads per SM and 32 resident warps per SM.
 
 These plots show the GPU computing can yield speedups over 10 times
 that of the CPU for sufficiently high grid resolution. These tests
-were run with asynchronous Red-Black Gauss Seidel iterative
-algorithms, which compute faster than their synchronous counterparts
-(albeit with slower convergence).
+were run with synchronous Red-Black Gauss Seidel iterative
+algorithms, which compute slower than their asynchronous counterparts.
 
 <p align="center">
-<img src="./plots/runtimes/results_runtimes_linear_4th_order.png" height="200"> <img src="./plots/runtimes/results_speedup_linear_4th_order.png" height="200">
+<img src="./plots/runtimes/results_runtimes_linear_2nd_order.png" height="200"> <img src="./plots/runtimes/results_speedup_linear_2nd_order.png" height="200">
 </p>
 
 While solvers on coarse resolution meshes do run faster on the CPU

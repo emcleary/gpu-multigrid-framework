@@ -11,5 +11,5 @@ difference scheme.  The following plot shows the accuracy of its
 results using the linear solver.
 
 <p align="center">
-<img src="../../plots/accuracy_linear/results_2nd_order.png" height="200">
+<img src="../../plots/accuracy_linear/results_2nd_order_linear.png" height="200">
 </p>

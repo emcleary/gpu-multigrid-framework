@@ -12,7 +12,7 @@ boundaries.  The following plot shows the accuracy of its results
 using the linear solver.
 
 <p align="center">
-<img src="../../plots/accuracy_linear/results_2nd_order.png" height="200">
+<img src="../../plots/accuracy_linear/results_4th_order.png" height="200">
 </p>
 
 Inaccuracies at the highest resolutions are likely due to the
