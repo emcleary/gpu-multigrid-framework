@@ -18,7 +18,7 @@ def load_levels():
     levels = []
     with open('levels.txt', 'r') as file:
         while line := file.readline():
-            levels.append(int(line.rstrip('\n')))
+            levels.append(2**int(line.rstrip('\n')))
     return tuple(levels)
 
 if __name__ == '__main__':

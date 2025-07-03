@@ -38,7 +38,7 @@ class AccuracyPlot:
 
     def plot(self, outfile=None):
         fig, ax = plt.subplots()
-        ax.semilogy(self._levels, self._data, label='numerical solution')
+        ax.loglog(self._levels, self._data, label='numerical solution')
 
         if self._ref:
             for k, v in self._ref.items():
@@ -51,13 +51,13 @@ class AccuracyPlot:
                 else:
                     print('Not setup for order of accuracy greater than 20')
                     sys.exit()
-                ax.semilogy(self._levels, v, '--', label=label)
+                ax.loglog(self._levels, v, '--', label=label)
         plt.legend()
 
         ax.set_xlabel(self._xlabel)
         ax.set_ylabel(self._ylabel)
 
-        ax.xaxis.set_ticklabels([f"$2^{{{i}}}$" for i in self._levels][::2])
+        # ax.xaxis.set_ticklabels([f"$2^{{{i}}}$" for i in self._levels][::2])
         ax.set_title(self._title)
         
         if outfile:
