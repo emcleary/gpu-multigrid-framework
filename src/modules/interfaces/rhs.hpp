@@ -4,7 +4,7 @@
 #include "src/grid.hpp"
 
 
-namespace gmf {
+namespace pmf {
 namespace modules {
 
 class RHS {
@@ -15,4 +15,4 @@ public:
 };
 
 } // namespace modules
-} // namespace gmf
+} // namespace pmf

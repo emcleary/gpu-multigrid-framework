@@ -1,21 +1,22 @@
 #include "cycles.hpp"
 
 
-namespace gmf {
+namespace pmf {
 
-void VCycle::run_level(int lvl) {
+double VCycle::run_level(int lvl) {
     m_solver->smooth(lvl, m_nu0);
+    double residual_norm = 0;
     if (lvl > 0) {
-        m_solver->restrict(lvl);
+        residual_norm = m_solver->restrict(lvl);
         run_level(lvl - 1);
         m_solver->correct(lvl);
     }
     m_solver->smooth(lvl, m_nu1);
+    return residual_norm;
 }
 
 double VCycle::run() {
-    run_level(m_solver->get_num_levels() - 1);
-    return m_solver->calculate_residual_norm();
+    return run_level(m_solver->get_num_levels() - 1);
 }
 
-} // namespace gmf
+} // namespace pmf

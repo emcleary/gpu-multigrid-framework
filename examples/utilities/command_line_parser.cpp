@@ -19,15 +19,15 @@ CMD command_line_parser(int argc, char* argv[]) {
     if (argc != 4)
         usage_error();
 
-    std::shared_ptr<gmf::Solver> solver;
+    std::shared_ptr<pmf::Solver> solver;
     switch (std::stoi(argv[2])) {
     case 1:
         std::cout << "Linear solver\n";
-        solver = std::make_shared<gmf::SolverLinear>();
+        solver = std::make_shared<pmf::SolverLinear>();
         break;
     case 2:
         std::cout << "Nonlinear full solver\n";
-        solver = std::make_shared<gmf::SolverNonlinearFull>();
+        solver = std::make_shared<pmf::SolverNonlinearFull>();
         break;
     default:
         std::cerr << "Solver ID " << argv[2] << " not allowed.\n\n";

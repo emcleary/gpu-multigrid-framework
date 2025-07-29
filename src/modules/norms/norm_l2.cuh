@@ -7,12 +7,14 @@
 
 #include "src/modules/interfaces/norm.cuh"
 
-namespace gmf {
+namespace pmf {
 namespace modules {
 
 class NormL2 : public Norm {
 public:
     NormL2();
+    NormL2(uint gpu_threads, uint cpu_threads);
+
     ~NormL2();
 
     virtual double run_host(const Array& array, const Grid& grid) override;
@@ -23,4 +25,4 @@ private:
 };
 
 } // namespace modules
-} // namespace gmf {
+} // namespace pmf {

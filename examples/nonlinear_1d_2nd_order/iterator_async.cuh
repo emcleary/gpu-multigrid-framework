@@ -9,8 +9,14 @@
 
 class IteratorAsync : public IteratorNonlinear {
 public:
-    IteratorAsync(const size_t max_threads_per_block, std::shared_ptr<NonlinearEquation> eqn)
-            : IteratorNonlinear(max_threads_per_block, eqn) {}
+    IteratorAsync(std::shared_ptr<NonlinearEquation> eqn) : IteratorNonlinear(eqn) {}
 
-    virtual void run_device(gmf::Array& v, const gmf::Array& f, const gmf::modules::BoundaryConditions& bcs, const gmf::Grid& grid) override;
+    IteratorAsync(uint gpu_threads, std::shared_ptr<NonlinearEquation> eqn)
+            : IteratorNonlinear(gpu_threads, eqn) {}
+
+    IteratorAsync(uint gpu_threads, uint cpu_threads, std::shared_ptr<NonlinearEquation> eqn)
+            : IteratorNonlinear(gpu_threads, cpu_threads, eqn) {}
+
+    virtual void run_device(pmf::Array& v, const pmf::Array& f,
+            const pmf::modules::BoundaryConditions& bcs, const pmf::Grid& grid) override;
 };

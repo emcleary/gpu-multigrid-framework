@@ -6,7 +6,7 @@
 #include "utilities.hpp"
 
 
-namespace gmf {
+namespace pmf {
 
 void TimerCPU::start() {
     m_start = std::chrono::high_resolution_clock::now();
@@ -46,4 +46,4 @@ float TimerGPU::duration() {
     return milliseconds;
 }
 
-} // namespace gmf
+} // namespace pmf

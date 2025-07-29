@@ -14,7 +14,7 @@
 void cudaCheckDisplay(cudaError_t err, const char *file, int line);
 void cublasCheckDisplay(cublasStatus_t stat, const char *file, int line);
 
-namespace gmf {
+namespace pmf {
 
 template <class T>
 float measure_performance(std::function<T()> bound_function,
@@ -32,4 +32,4 @@ float measure_performance(std::function<T()> bound_function,
     return timer.duration() / n_repeats;
 }
 
-} // namespace gmf
+} // namespace pmf

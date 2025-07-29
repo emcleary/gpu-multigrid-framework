@@ -1,22 +1,21 @@
 #pragma once
 
 #include "src/array.hpp"
-#include "src/modules/boundary_conditions.hpp"
+#include "src/modules/interfaces/boundary_conditions.cuh"
+#include "src/modules/interfaces/parallel.cuh"
 
 
-namespace gmf {
+namespace pmf {
 namespace modules {
 
-class Interpolator {
+class Interpolator : public Parallel {
 public:
-    Interpolator(const size_t max_threads_per_block) : m_max_threads_per_block(max_threads_per_block) {}
+    Interpolator() {}
+    Interpolator(uint gpu_threads, uint cpu_threads) : Parallel(gpu_threads, cpu_threads) {}
 
     virtual void run_host(Array& coarse, Array& fine, BoundaryConditions& bcs) = 0;
     virtual void run_device(Array& coarse, Array& fine, BoundaryConditions& bcs) = 0;
-
-protected:
-    const size_t m_max_threads_per_block;
 };
 
 } // namespace modules
-} // namespace gmf
+} // namespace pmf

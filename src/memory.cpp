@@ -4,7 +4,7 @@
 
 #include "utilities.hpp"
 
-namespace gmf {
+namespace pmf {
 
 double* managed_allocator(const size_t N) {
     double* ptr = nullptr;
@@ -36,4 +36,4 @@ void host_deleter::operator()(double* ptr) {
     cudaCheck(cudaFreeHost(ptr));
 }
 
-} // namespace gmf
+} // namespace pmf

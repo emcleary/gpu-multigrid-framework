@@ -4,16 +4,17 @@
 #include "src/modules/interfaces/restrictor.cuh"
 
 
-namespace gmf {
+namespace pmf {
 namespace modules {
 
 class RestrictorFullWeighting : public Restrictor {
 public:
-    RestrictorFullWeighting(const int max_threads_per_block) : Restrictor(max_threads_per_block) {}
+    RestrictorFullWeighting() {}
+    RestrictorFullWeighting(uint gpu_threads, uint cpu_threads) : Restrictor(gpu_threads, cpu_threads) {}
 
     void run_host(Array& fine, Array& coarse, BoundaryConditions& bcs);
     void run_device(Array& fine, Array& coarse, BoundaryConditions& bcs);
 };
 
 } // namespace modules
-} // namespace gmf
+} // namespace pmf

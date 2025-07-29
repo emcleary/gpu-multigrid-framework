@@ -1,8 +1,0 @@
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/performance)
-set(TARGET_NAME cpu_gpu_ratio)
-file (GLOB_RECURSE source CONFIGURE_DEPENDS "*.cpp")
-file (GLOB_RECURSE source_cuda CONFIGURE_DEPENDS "*.cu")
-add_executable(${TARGET_NAME} ${source} ${source_cuda})
-set_target_properties(${TARGET_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-target_include_directories(${TARGET_NAME} PUBLIC ../..)
-target_link_libraries(${TARGET_NAME} PUBLIC Src ExUtil CUDA::cudart CUDA::cublas)

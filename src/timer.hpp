@@ -3,7 +3,7 @@
 #include <chrono>
 #include <cuda_runtime.h>
 
-namespace gmf {
+namespace pmf {
 
 class Timer {
 public:
@@ -37,4 +37,4 @@ private:
     cudaEvent_t m_start, m_stop;
 };
 
-} // namespace gmf
+} // namespace pmf

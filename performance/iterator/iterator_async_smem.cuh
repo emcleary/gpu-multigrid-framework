@@ -1,6 +1,6 @@
 #pragma once
 
-#include "iterator_cpu.cuh"
+#include "examples/heat_equation_1d_2nd_order/iterator_cpu.cuh"
 
 #include "src/array.hpp"
 #include "src/grid.hpp"
@@ -9,7 +9,8 @@
 
 class IteratorAsyncSMEM : public IteratorCPU {
 public:
-    IteratorAsyncSMEM(const size_t max_threads_per_block) : IteratorCPU(max_threads_per_block) {}
+    IteratorAsyncSMEM(uint gpu_threads) : IteratorCPU(gpu_threads) {}
 
-    virtual void run_device(gmf::Array& v, const gmf::Array& f, const gmf::modules::BoundaryConditions& bcs, const gmf::Grid& grid) override;
+    virtual void run_device(pmf::Array& v, const pmf::Array& f,
+            const pmf::modules::BoundaryConditions& bcs, const pmf::Grid& grid) override;
 };

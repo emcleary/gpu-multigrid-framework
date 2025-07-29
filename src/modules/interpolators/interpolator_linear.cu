@@ -1,34 +1,26 @@
 #include "interpolator_linear.cuh"
 
 #include <cuda_runtime.h>
+#include <omp.h>
 
 #include "src/array.hpp"
 
-namespace gmf {
+namespace pmf {
 namespace modules {
-
-__host__ __device__
-inline double eval_even(const ArrayRaw& coarse, const int i) {
-    return coarse[i];
-}
-
-__host__ __device__
-inline double eval_odd(const ArrayRaw& coarse, const int i) {
-    return (coarse[i] + coarse[i + 1]) / 2;
-}
 
 namespace interpolator_linear {
 __global__
 void kernel(ArrayRaw coarse, ArrayRaw fine, BoundaryConditions bcs) {
-    int idx = threadIdx.x + blockDim.x * blockIdx.x;
+    const int ci = threadIdx.x + blockDim.x * blockIdx.x;
+    const int fi = ci * 2;
 
-    if (idx < coarse.size() - 1) {
-        fine[2*idx] = eval_even(coarse, idx);
-        fine[2*idx + 1] = eval_odd(coarse, idx);
+    if (ci < coarse.size() - 1) {
+        fine[fi] = coarse[ci];
+        fine[fi + 1] =  (coarse[ci] + coarse[ci + 1]) / 2;
     }
 
     if (threadIdx.x == 0 && blockIdx.x == 0) {
-        if (bcs.is_periodic()) {
+        if (bcs.is_periodic_x()) {
             const int nc = coarse.size() - 1;
             const int nf = fine.size() - 1;
             fine[nf-1] = (coarse[nc-1] + coarse[0]) / 2;
@@ -42,12 +34,16 @@ void kernel(ArrayRaw coarse, ArrayRaw fine, BoundaryConditions bcs) {
 
 
 void InterpolatorLinear::run_host(Array& coarse, Array& fine, BoundaryConditions& bcs) {
-    for (int i = 0; i < coarse.size() - 1; ++i) {
-        fine[2*i] = eval_even(coarse, i);
-        fine[2*i+1] = eval_odd(coarse, i);
+    
+    omp_set_num_threads(m_omp_threads);
+#pragma omp parallel for
+    for (int ci = 0; ci < coarse.size() - 1; ++ci) {
+        const int fi = ci * 2;
+        fine[fi] = coarse[ci];
+        fine[fi + 1] =  (coarse[ci] + coarse[ci + 1]) / 2;
     }
 
-    if (bcs.is_periodic()) {
+    if (bcs.is_periodic_x()) {
         const int nc = coarse.size() - 1;
         const int nf = fine.size() - 1;
         fine[nf-1] = (coarse[nc-1] + coarse[0]) / 2;
@@ -58,10 +54,10 @@ void InterpolatorLinear::run_host(Array& coarse, Array& fine, BoundaryConditions
 }
 
 void InterpolatorLinear::run_device(Array& coarse, Array& fine, BoundaryConditions& bcs) {
-    const int threadsPerBlock = std::min(m_max_threads_per_block, coarse.size() - 1);
-    const int blocksPerGrid = (coarse.size() + threadsPerBlock - 1) / threadsPerBlock;
-    interpolator_linear::kernel<<<blocksPerGrid, threadsPerBlock>>>(coarse, fine, bcs);
+    const uint threads = std::min(m_max_threads_per_block, static_cast<uint>(coarse.size()) - 1);
+    const uint blocks = (coarse.size() + threads - 1) / threads;
+    interpolator_linear::kernel<<<blocks, threads>>>(coarse, fine, bcs);
 }
 
 } // namespace modules
-} // namespace gmf
+} // namespace pmf

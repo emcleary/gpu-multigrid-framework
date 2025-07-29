@@ -6,7 +6,7 @@ struct CMD {
     const int n_levels;
     const int n_points;
     const bool on_gpu;
-    std::shared_ptr<gmf::Solver> solver;
+    std::shared_ptr<pmf::Solver> solver;
 };
 
 void usage_error();

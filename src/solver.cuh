@@ -7,29 +7,28 @@
 #include "kernels.cuh"
 #include "levels.hpp"
 
-#include "modules/interfaces/equation.hpp"
+#include "modules/interfaces/equation.cuh"
 #include "modules/interfaces/interpolator.cuh"
 #include "modules/interfaces/iterator.cuh"
 #include "modules/interfaces/lhs.cuh"
 #include "modules/interfaces/norm.cuh"
 #include "modules/interfaces/restrictor.cuh"
-#include "modules/interfaces/rhs.hpp"
-#include "modules/boundary_conditions.hpp"
+#include "modules/interfaces/boundary_conditions.cuh"
+#include "modules/interfaces/parallel.cuh"
+#include "modules/math/add.cuh"
+#include "modules/math/copy.cuh"
+#include "modules/math/sub.cuh"
 
 
-namespace gmf {
+namespace pmf {
 
-class Solver {
+class Solver : public Parallel {
 public:
     Solver() {}
 
-    const Array& get_solution() { return m_levels.back().solution; }
+    const Array& get_solution() { return m_levels->back().solution; }
 
-    int get_num_levels() { return m_levels.size(); }
-
-    void set_max_threads_per_block(int n_threads) {
-        m_max_threads_per_block = n_threads;
-    }
+    int get_num_levels() { return m_levels->size(); }
 
     // allocates all memory needed based on grid info (e.g. N),
     // store in levels, and initialize data in the finest level
@@ -41,19 +40,19 @@ public:
     
     void smooth(const int n_iter, const int lvl);
 
-    virtual void restrict(const int lvl) = 0;
+    virtual double restrict(const int lvl) = 0;
     virtual void correct(const int lvl) = 0;
 
+    void set_levels(std::shared_ptr<Levels> levels) {
+        m_levels = levels;
+    }
+            
     void set_equation(std::shared_ptr<modules::Equation> eqn) {
         m_eqn = eqn;
     }
             
     void set_lhs(std::shared_ptr<modules::LHS> lhs) {
         m_lhs = lhs;
-    }
-            
-    void set_rhs(std::shared_ptr<modules::RHS> rhs) {
-        m_rhs = rhs;
     }
             
     void set_interpolator(std::shared_ptr<modules::Interpolator> interpolator) {
@@ -77,19 +76,17 @@ public:
     }
 
 protected:
-    // used for simple kernels, like add and substract
-    size_t m_max_threads_per_block = 512;
-
+    std::shared_ptr<Levels> m_levels;
     std::shared_ptr<modules::Equation> m_eqn;
     std::shared_ptr<modules::Norm> m_norm;
     std::shared_ptr<modules::Iterator> m_iterator;
     std::shared_ptr<modules::Interpolator> m_interpolator;
     std::shared_ptr<modules::Restrictor> m_restrictor;
     std::shared_ptr<modules::LHS> m_lhs;
-    std::shared_ptr<modules::RHS> m_rhs;
     std::shared_ptr<modules::BoundaryConditions> m_boundary_conditions;
-
-    std::vector<Level> m_levels;
+    modules::Add m_add;
+    modules::Sub m_sub;
+    modules::Copy m_copy;
 
     void check_ready_for_run() {
         assert(m_eqn != nullptr && "Equation not set!\n");
@@ -98,9 +95,14 @@ protected:
         assert(m_interpolator != nullptr && "Interpolator not set!\n");
         assert(m_restrictor != nullptr && "Restrictor not set!\n");
         assert(m_lhs != nullptr && "LHS not set!\n");
-        assert(m_rhs != nullptr && "RHS not set!\n");
         assert(m_boundary_conditions != nullptr && "BoundaryConditions not set!\n");
+        m_add.set_gpu_threads(m_max_threads_per_block);
+        m_add.set_cpu_threads(m_omp_threads);
+        m_sub.set_gpu_threads(m_max_threads_per_block);
+        m_sub.set_cpu_threads(m_omp_threads);
+        m_copy.set_gpu_threads(m_max_threads_per_block);
+        m_copy.set_cpu_threads(m_omp_threads);
     }    
 };
 
-} // namespace gmf
+} // namespace pmf

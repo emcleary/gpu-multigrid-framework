@@ -9,7 +9,9 @@
 
 class IteratorAsync : public IteratorCPU {
 public:
-    IteratorAsync(const size_t max_threads_per_block) : IteratorCPU(max_threads_per_block) {}
+    IteratorAsync() {}
+    IteratorAsync(uint gpu_threads, uint cpu_threads = 1) : IteratorCPU(gpu_threads, cpu_threads) {}
 
-    virtual void run_device(gmf::Array& v, const gmf::Array& f, const gmf::modules::BoundaryConditions& bcs, const gmf::Grid& grid) override;
+    virtual void run_device(pmf::Array& v, const pmf::Array& f,
+            const pmf::modules::BoundaryConditions& bcs, const pmf::Grid& grid) override;
 };

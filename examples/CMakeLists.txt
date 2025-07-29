@@ -1,4 +1,5 @@
 add_subdirectory(utilities)
 add_subdirectory(heat_equation_1d_2nd_order)
-# add_subdirectory(heat_equation_1d_4th_order)
+add_subdirectory(heat_equation_2d_2nd_order)
+add_subdirectory(nonlinear_2d)
 add_subdirectory(nonlinear_1d_2nd_order)

@@ -4,10 +4,10 @@
 
 #include "src/array.hpp"
 
-using gmf::Array;
-using gmf::ArrayRaw;
-using gmf::Grid;
-using gmf::modules::BoundaryConditions;
+using pmf::Array;
+using pmf::ArrayRaw;
+using pmf::Grid;
+using pmf::modules::BoundaryConditions;
 
 __host__ __device__
 inline double eval(const ArrayRaw& v, const ArrayRaw& f, const double h, const double gamma, const int i) {
@@ -29,22 +29,27 @@ void kernel(ArrayRaw v, const ArrayRaw f, const double h, const double gamma) {
 }
 
 __global__
-void boundaries(ArrayRaw v, const ArrayRaw f, const double gamma, const BoundaryConditions bcs, const double h) {
+void boundaries(ArrayRaw v, const ArrayRaw f, const double gamma,
+        const BoundaryConditions bcs, const double h, const NonlinearEquation eqn,
+        const ArrayRaw x, const ArrayRaw y) {
+
     const int n = v.size() - 1;
     
-    if (bcs.is_left_dirichlet()) {
+    if (bcs.is_west_dirichlet()) {
         v[0] = f[0];
     } else { // neumann
+        const double un = eqn.neumann_bc_west(x.front());
         double num = h * h * f[0] + 2 * v[1];
-        double denom = 2 + gamma * bcs.get_left() * h * h;
+        double denom = 2 + gamma * un * h * h;
         v[0] = num / denom;
     }
 
-    if (bcs.is_right_dirichlet()) {
+    if (bcs.is_east_dirichlet()) {
         v[n] = f[n];
     } else { // neumann
+        const double un = eqn.neumann_bc_east(x.back());
         double num = h * h * f[n] + 2 * v[n-1];
-        double denom = 2 + gamma * bcs.get_right() * h * h;
+        double denom = 2 + gamma * un * h * h;
         v[n] = num / denom;
     }
 }
@@ -52,12 +57,15 @@ void boundaries(ArrayRaw v, const ArrayRaw f, const double gamma, const Boundary
 
 
 void IteratorAsync::run_device(Array& v, const Array& f, const BoundaryConditions& bcs, const Grid& grid) {
-    const int threadsPerBlock = std::min(m_max_threads_per_block, v.size() / 2);
-    const int blocksPerGrid = (v.size() / 2 + threadsPerBlock - 1) / threadsPerBlock;
+    const uint n = v.size() / 2;
+    const uint threads = std::min(m_max_threads_per_block, n);
+    const uint blocks = (n + threads - 1) / threads;
     const double h = grid.get_cell_width();
     const double gamma = m_eqn->get_gamma();
+    const Array& x = grid.get_x();
+    const Array& y = grid.get_y();
 
     // Red-Black Gauss Seidel
-    async::kernel<<<blocksPerGrid, threadsPerBlock>>>(v, f, h, gamma);
-    async::boundaries<<<1, 1>>>(v, f, gamma, bcs, h);
+    async::kernel<<<blocks, threads>>>(v, f, h, gamma);
+    async::boundaries<<<1, 1>>>(v, f, gamma, bcs, h, *m_eqn, x, y);
 }

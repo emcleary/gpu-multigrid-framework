@@ -2,7 +2,7 @@
 
 #include <cstddef> // size_t
 
-namespace gmf {
+namespace pmf {
 
 double* managed_allocator(const size_t N);
 double* device_allocator(const size_t N);
@@ -21,4 +21,4 @@ struct host_deleter {
     void operator()(double* ptr);
 };
 
-} // namespace gmf
+} // namespace pmf

@@ -9,7 +9,7 @@
 #include "kernels.cuh"
 #include "levels.hpp"
 
-#include "modules/interfaces/equation.hpp"
+#include "modules/interfaces/equation.cuh"
 #include "modules/interfaces/interpolator.cuh"
 #include "modules/interfaces/iterator.cuh"
 #include "modules/interfaces/lhs.cuh"
@@ -18,14 +18,14 @@
 #include "modules/interfaces/rhs.hpp"
 
 
-namespace gmf {
+namespace pmf {
 
 class SolverLinear : public Solver {
 public:
     SolverLinear() {}
 
-    virtual void restrict(const int lvl) override;
+    virtual double restrict(const int lvl) override;
     virtual void correct(const int lvl) override;
 };
 
-} // namespace gmf
+} // namespace pmf

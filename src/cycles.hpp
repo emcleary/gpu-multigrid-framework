@@ -6,7 +6,7 @@
 #include "solver.cuh"
 
 
-namespace gmf {
+namespace pmf {
 
 class Algorithm {
 public:
@@ -42,10 +42,10 @@ public:
     }
 
 private:
-    void run_level(int lvl);
+    double run_level(int lvl);
 
     int m_nu0 = 2;
     int m_nu1 = 1;
 };
 
-} // namespace gmf
+} // namespace pmf

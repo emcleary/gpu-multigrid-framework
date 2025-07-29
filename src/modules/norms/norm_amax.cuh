@@ -5,15 +5,17 @@
 #include "src/array.hpp"
 #include "src/grid.hpp"
 
-// #include "src/modules/interfaces.hpp"
+
 #include "src/modules/interfaces/norm.cuh"
 
-namespace gmf {
+namespace pmf {
 namespace modules {
 
 class NormAmax : public Norm {
 public:
     NormAmax();
+    NormAmax(uint gpu_threads, uint cpu_threads);
+
     ~NormAmax();
 
     virtual double run_host(const Array& array, const Grid& grid) override;
@@ -25,4 +27,4 @@ private:
 };
 
 } // namespace modules
-} // namespace gmf {
+} // namespace pmf {

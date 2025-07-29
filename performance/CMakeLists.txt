@@ -1,3 +1,3 @@
 add_subdirectory(iterator)
-# add_subdirectory(lhs)
-add_subdirectory(cpu_gpu_ratio)
+add_subdirectory(cpu_gpu_ratio_2d)
+add_subdirectory(runtimes_2d)
